@@ -29,6 +29,14 @@ class OrderController extends Controller
         return $this->successResponse($collection);
     }
 
+    public function cancel(Order $order)
+    {
+        $order->status = 'cancelled';
+        $order->save();
+
+        return $this->successResponse($order->refresh()->toArray());
+    }
+
     public function store(CreateOrderRequest $request, Order $order, OrderDetails $orderDetails)
     {
         $data = $request->validated();

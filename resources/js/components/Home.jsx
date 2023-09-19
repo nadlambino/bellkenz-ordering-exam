@@ -12,10 +12,6 @@ export default function Home() {
         return orders?.data ?? [];
     });
 
-    React.useEffect(() => {
-        console.log(orders);
-    }, [orders]);
-
     return (
         <div className="container">
             <OrderForm
