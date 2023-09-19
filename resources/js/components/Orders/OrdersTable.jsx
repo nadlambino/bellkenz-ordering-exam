@@ -13,10 +13,10 @@ export default function OrdersTable({ orders }) {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Product Name</TableCell>
-                        <TableCell>Price</TableCell>
-                        <TableCell>Qty</TableCell>
+                        <TableCell>Customer Name</TableCell>
+                        <TableCell>Order Number</TableCell>
                         <TableCell>Gross Sales</TableCell>
+                        <TableCell>Action</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -29,26 +29,15 @@ export default function OrdersTable({ orders }) {
                                 },
                             }}
                         >
-                            <TableCell>{row.product_name}</TableCell>
-                            <TableCell>{row.product_price}</TableCell>
-                            <TableCell>{row.quantity}</TableCell>
+                            <TableCell>{row.customer.customer_name}</TableCell>
+                            <TableCell>{row.order_number}</TableCell>
                             <TableCell>{row.gross_sales}</TableCell>
+                            <TableCell>
+                                <button>Edit</button>
+                                <button>Cancel</button>
+                            </TableCell>
                         </TableRow>
                     ))}
-                    <TableRow
-                        sx={{
-                            "&:last-child td, &:last-child th": {
-                                border: 0,
-                            },
-                        }}
-                    >
-                        <TableCell colSpan={3}>Gross Sales</TableCell>
-                        <TableCell>
-                            {orders.reduce((acc, cur) => {
-                                return acc + cur.gross_sales;
-                            }, 0)}
-                        </TableCell>
-                    </TableRow>
                 </TableBody>
             </Table>
         </TableContainer>

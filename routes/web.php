@@ -22,4 +22,5 @@ Route::get('/', function () {
 
 Route::get('/products/all', [ProductController::class, 'all']);
 Route::get('/customers/all', [CustomerController::class, 'all']);
+Route::get('orders/all', [OrderController::class, 'all']);
 Route::resource('orders', OrderController::class);

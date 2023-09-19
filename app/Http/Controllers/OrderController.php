@@ -13,6 +13,22 @@ use Throwable;
 
 class OrderController extends Controller
 {
+    public function all(Order $order) 
+    {
+        $data = $order->query()
+            ->with('customer')
+            ->with('orderDetails')
+            ->get()
+            ->toArray();
+
+        $collection = collect($data)->map(function ($item) {
+            $item['gross_sales'] = collect($item['order_details'])->sum('gross_sales');
+
+            return $item;
+        })->toArray();
+        return $this->successResponse($collection);
+    }
+
     public function store(CreateOrderRequest $request, Order $order, OrderDetails $orderDetails)
     {
         $data = $request->validated();
