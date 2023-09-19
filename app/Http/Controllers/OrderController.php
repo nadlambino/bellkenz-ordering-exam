@@ -26,7 +26,7 @@ class OrderController extends Controller
                 return Arr::only($item, ['order_number', 'product_code', 'quantity', 'gross_sales']);
             })->toArray();
 
-            $createdOrderDetails = $orderDetails->insert($orderDetailsData);
+            $orderDetails->insert($orderDetailsData);
 
             DB::commit();
 
