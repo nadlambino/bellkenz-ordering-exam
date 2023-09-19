@@ -12,5 +12,8 @@
     </div>
     @viteReactRefresh
     @vite(['resources/js/app.jsx'])
+    <script>
+    window.baseUrl = '{{ url("") }}';
+    </script>
 </body>
 </html> 

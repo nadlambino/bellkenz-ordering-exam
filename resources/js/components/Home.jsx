@@ -1,10 +1,19 @@
+import * as React from "react";
+import OrderForm from "./Orders/OrderForm";
+
 export default function Home() {
+    const [isOrderFormOpen, setIsOrderFormOpen] = React.useState(false);
+
     return (
         <div className="container">
-            <div className="row my-5">
-                <div className="col-md-8 mx-auto">
-                    <h1> Add React js to laravel 10 with vite</h1>
-                </div>
+            <OrderForm
+                isOpen={isOrderFormOpen}
+                setIsOpen={setIsOrderFormOpen}
+            />
+            <div className="menu">
+                <button onClick={() => setIsOrderFormOpen(true)}>
+                    New Order
+                </button>
             </div>
         </div>
     );
