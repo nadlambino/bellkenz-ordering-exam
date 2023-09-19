@@ -23,8 +23,7 @@ class CreateOrderRequest extends FormRequest
     {
         return [
             'customer_code' => ['required', 'exists:customers'],
-            'product_code' => ['required', 'exists:products'],
-            'quantity' => ['required', 'numeric']
+            'order_details' => ['required'],
         ];
     }
 }

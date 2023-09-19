@@ -16,9 +16,7 @@ export default function Home() {
                     New Order
                 </button>
             </div>
-            <div className="content">
-                <OrderTable />
-            </div>
+            <div className="content">{/* <OrderTable /> */}</div>
         </div>
     );
 }

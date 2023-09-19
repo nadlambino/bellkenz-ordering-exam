@@ -10,6 +10,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import OrderTable from "./OrderTable";
 
 export default function OrderForm({ isOpen, setIsOpen }) {
     const { data: products } = useQuery("products", async () => {
@@ -27,7 +28,8 @@ export default function OrderForm({ isOpen, setIsOpen }) {
 
     const [productId, setProductId] = React.useState("");
     const [customerId, setCustomerId] = React.useState("");
-    const [quantity, setQuantity] = React.useState(0);
+    const [quantity, setQuantity] = React.useState(1);
+    const [orderDetails, setOrderDetails] = React.useState([]);
     const grossSales = React.useMemo(() => {
         if (!productId || quantity === 0) return 0;
 
@@ -40,15 +42,19 @@ export default function OrderForm({ isOpen, setIsOpen }) {
         return product[0].product_price * quantity;
     }, [quantity, productId]);
 
+    React.useEffect(() => {
+        setProductId("");
+        setQuantity(1);
+    }, [orderDetails]);
+
     const {
         mutate: createOrder,
         isSuccess,
         isError,
     } = useMutation(async () => {
         return await window.axios.post(`${window.baseUrl}/orders`, {
-            product_code: productId,
             customer_code: customerId,
-            quantity: quantity,
+            order_details: orderDetails,
         });
     });
 
@@ -65,6 +71,36 @@ export default function OrderForm({ isOpen, setIsOpen }) {
         }
     }, [isError]);
 
+    const handleAddOrder = () => {
+        if (quantity <= 0) {
+            return alert("Please provide a quantity");
+        }
+
+        let product = products.filter(
+            (product) => product.product_code === productId
+        )[0];
+
+        if (!product) {
+            return;
+        }
+
+        setOrderDetails([
+            ...orderDetails,
+            {
+                ...product,
+                quantity: quantity,
+                gross_sales: grossSales,
+            },
+        ]);
+    };
+
+    const handleResetOrder = () => {
+        setCustomerId("");
+        setProductId("");
+        setQuantity(1);
+        setOrderDetails([]);
+    };
+
     const handleCreate = () => {
         createOrder();
     };
@@ -78,6 +114,28 @@ export default function OrderForm({ isOpen, setIsOpen }) {
             <Dialog fullWidth maxWidth="md" open={isOpen} onClose={handleClose}>
                 <DialogTitle>New Order</DialogTitle>
                 <DialogContent>
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel id="customers">Customer</InputLabel>
+                        <Select
+                            labelId="customers"
+                            label="Customer"
+                            defaultValue=""
+                            value={customerId}
+                            onChange={({ target }) =>
+                                setCustomerId(target.value)
+                            }
+                            disabled={customerId !== ""}
+                        >
+                            {customers?.map((customer) => (
+                                <MenuItem
+                                    value={customer.customer_code}
+                                    key={customer.customer_code}
+                                >
+                                    {customer.customer_name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="products">Product</InputLabel>
                         <Select
@@ -100,27 +158,7 @@ export default function OrderForm({ isOpen, setIsOpen }) {
                             ))}
                         </Select>
                     </FormControl>
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel id="customers">Customer</InputLabel>
-                        <Select
-                            labelId="customers"
-                            label="Customer"
-                            defaultValue=""
-                            value={customerId}
-                            onChange={({ target }) =>
-                                setCustomerId(target.value)
-                            }
-                        >
-                            {customers?.map((customer) => (
-                                <MenuItem
-                                    value={customer.customer_code}
-                                    key={customer.customer_code}
-                                >
-                                    {customer.customer_name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="quantity">Quantity</InputLabel>
                         <Input
@@ -140,7 +178,15 @@ export default function OrderForm({ isOpen, setIsOpen }) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleCreate}>Create</Button>
+                    <Button onClick={handleResetOrder}>Reset Order</Button>
+                    <Button onClick={handleAddOrder}>Add Order</Button>
+                </DialogActions>
+
+                <DialogContent>
+                    <OrderTable orders={orderDetails} />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCreate}>Create Order</Button>
                 </DialogActions>
             </Dialog>
         </div>

@@ -13,25 +13,24 @@ use Throwable;
 
 class OrderController extends Controller
 {
-    public function store(CreateOrderRequest $request, Order $order, OrderDetails $orderDetails, Product $product)
+    public function store(CreateOrderRequest $request, Order $order, OrderDetails $orderDetails)
     {
         $data = $request->validated();
         $orderData = Arr::only($data, 'customer_code');
-        $orderDetailsData = Arr::only($data, ['product_code', 'quantity']);
 
         try {
             DB::beginTransaction();
             $createdOrder = $order->create($orderData);
-            $productData = $product->findOrFail($data['product_code']);
+            $orderDetailsData = collect(Arr::get($data, 'order_details'))->map(function ($item) use ($createdOrder) {
+                $item['order_number'] = $createdOrder->order_number;
+                return Arr::only($item, ['order_number', 'product_code', 'quantity', 'gross_sales']);
+            })->toArray();
 
-            $orderDetailsData['order_number'] = $createdOrder->order_number;
-            $orderDetailsData['gross_sales'] = $productData->product_price * $data['quantity'];
-
-            $createdOrderDetails = $orderDetails->create($orderDetailsData);
+            $createdOrderDetails = $orderDetails->insert($orderDetailsData);
 
             DB::commit();
 
-            return $this->successResponse($createdOrderDetails->toArray(), 201);
+            return $this->successResponse($orderDetailsData, 201);
         } catch (Throwable $e) {
             DB::rollBack();
             return $this->errorResponse($e->getMessage(), 500);
