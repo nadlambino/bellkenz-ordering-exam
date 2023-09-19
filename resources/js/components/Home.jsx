@@ -1,6 +1,6 @@
 import * as React from "react";
 import OrderForm from "./Orders/OrderForm";
-import OrderTable from "./Orders/OrderTable";
+import OrdersTable from "./Orders/OrdersTable";
 
 export default function Home() {
     const [isOrderFormOpen, setIsOrderFormOpen] = React.useState(false);
@@ -16,7 +16,9 @@ export default function Home() {
                     New Order
                 </button>
             </div>
-            <div className="content">{/* <OrderTable /> */}</div>
+            <div className="content">
+                <OrdersTable orders={[]} />
+            </div>
         </div>
     );
 }

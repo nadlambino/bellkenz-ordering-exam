@@ -10,7 +10,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import OrderTable from "./OrderTable";
+import OrderFormTable from "./OrderFormTable";
 
 export default function OrderForm({ isOpen, setIsOpen }) {
     const { data: products } = useQuery("products", async () => {
@@ -183,7 +183,7 @@ export default function OrderForm({ isOpen, setIsOpen }) {
                 </DialogActions>
 
                 <DialogContent>
-                    <OrderTable orders={orderDetails} />
+                    <OrderFormTable orders={orderDetails} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCreate}>Create Order</Button>
